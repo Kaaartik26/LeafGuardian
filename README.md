@@ -1,15 +1,14 @@
 <p align="center">
-  <img src="web/public/logo-icon.png" alt="Green Guardian" width="80" />
+  <img src="web/public/logo-icon.png" alt="LeafGuardian" width="80" />
 </p>
 
-<h1 align="center">Green Guardian</h1>
+<h1 align="center">LeafGuardian</h1>
 
 <p align="center">
   AI-powered plant disease detection from leaf photos.
   <br />
   Upload an image, get an instant diagnosis with confidence scoring and treatment advice.
   <br /><br />
-  <a href="https://greenguardian.dev"><strong>Green Guardian Website</strong></a>
 </p>
 
 <p align="center">
@@ -35,7 +34,7 @@
 
 ## About
 
-Green Guardian is a full-stack web application that uses a custom-trained PyTorch model to identify plant diseases from leaf photographs. The model was trained on the [PlantVillage](https://www.kaggle.com/datasets/emmarex/plantdisease) dataset and classifies 15 conditions across three plant types (tomato, potato, and bell pepper), returning real-time predictions with confidence levels.
+LeafGuardian is a full-stack web application that uses a custom-trained PyTorch model to identify plant diseases from leaf photographs. The model was trained on the [PlantVillage](https://www.kaggle.com/datasets/emmarex/plantdisease) dataset and classifies 15 conditions across three plant types (tomato, potato, and bell pepper), returning real-time predictions with confidence levels.
 
 ### What It Does
 

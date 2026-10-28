@@ -33,8 +33,9 @@ export default function DiagnosePage() {
         },
         ...prev.slice(0, 9),
       ]);
-    } catch {
-      setError('Diagnosis failed. Please try a clearer photo.');
+    } catch (err) {
+      console.error('Diagnosis error:', err);
+      setError(err instanceof Error ? err.message : 'Diagnosis failed. Please try a clearer photo.');
     }
     setLoading(false);
   };

@@ -163,7 +163,7 @@ export default function DiagnoseForm({ onDiagnose, loading }: Props) {
             ref={inputRef}
             id="file-upload"
             type="file"
-            accept="image/jpeg,image/png,image/jpg"
+            accept="image/jpeg,image/png,image/jpg,image/webp"
             onChange={handleChange}
             style={{ display: 'none' }}
           />

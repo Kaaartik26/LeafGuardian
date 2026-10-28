@@ -14,18 +14,32 @@ app = FastAPI(title="Green Guardian API")
 # Falls back to localhost dev origins when unset. Credentials are disabled because
 # the API uses no cookies/sessions — combining "*" with credentials is unsafe.
 _raw_origins = os.environ.get("ALLOWED_ORIGINS", "").strip()
-ALLOWED_ORIGINS = [o.strip() for o in _raw_origins.split(",") if o.strip()] or [
-    "http://localhost:3000",
-    "http://localhost:3411",
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
-    allow_credentials=False,
-    allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["*"],
-)
+if _raw_origins:
+    ALLOWED_ORIGINS = [o.strip() for o in _raw_origins.split(",") if o.strip()]
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=ALLOWED_ORIGINS,
+        allow_credentials=False,
+        allow_methods=["GET", "POST", "OPTIONS"],
+        allow_headers=["*"],
+    )
+else:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[
+            "http://localhost:3000",
+            "http://localhost:3001",
+            "http://localhost:3002",
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:3001",
+            "http://127.0.0.1:3002",
+            "http://localhost:3411",
+        ],
+        allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
+        allow_credentials=False,
+        allow_methods=["GET", "POST", "OPTIONS"],
+        allow_headers=["*"],
+    )
 
 def _get_int_env(name: str, default: int, minimum: int = 1) -> int:
     """Parse an int env var, clamping to a minimum; fall back on bad input."""
@@ -186,16 +200,18 @@ async def predict(request: Request):
 
         is_jpeg = file_data.startswith(b'\xff\xd8\xff')
         is_png = file_data.startswith(b'\x89PNG')
+        is_webp = file_data.startswith(b'RIFF') and len(file_data) > 12 and file_data[8:12] == b'WEBP'
         
-        if not (is_jpeg or is_png):
-            print(f"WARNING: File doesn't start with JPEG or PNG magic bytes")
+        if not (is_jpeg or is_png or is_webp):
+            print(f"WARNING: File doesn't start with JPEG, PNG, or WebP magic bytes")
             print(f"  Got: {file_data[:10].hex()}")
             raise HTTPException(
                 status_code=400,
-                detail=f"Invalid image format. First bytes: {file_data[:10].hex()}"
+                detail=f"Invalid image format. Supported formats: JPEG, PNG, WebP. First bytes: {file_data[:10].hex()}"
             )
         
-        print(f"✓ Valid image detected ({'JPEG' if is_jpeg else 'PNG'})")
+        format_name = 'JPEG' if is_jpeg else ('PNG' if is_png else 'WebP')
+        print(f"✓ Valid image detected ({format_name})")
         
 
         result = predict_disease(file_data)
